@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class S_Node : MonoBehaviour
+public class S_Node 
 {
-    // Start is called before the first frame update
-    void Start()
+    private bool Passable;
+
+    public bool GetPassable()
     {
-        
+        return Passable;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetPassable(bool passable)
     {
-        
+        Passable = passable;
     }
 }
