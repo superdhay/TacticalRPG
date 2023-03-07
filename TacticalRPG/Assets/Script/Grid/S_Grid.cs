@@ -19,8 +19,10 @@ public class S_Grid : MonoBehaviour
     //Each grid object.
     private S_Node[,] Grid;
 
+/////////////////////////////////////////
+
     //Function launch at beginning at start.
-    private void Start()
+    private void Awake()
     {
         GenerateGrid();
     }
@@ -29,6 +31,13 @@ public class S_Grid : MonoBehaviour
     private void GenerateGrid()
     {
         Grid = new S_Node[Length, Width];
+        for(int y = 0; y<Width; y++)
+        {
+            for (int x = 0; x < Length; x++)
+            {
+                Grid[x, y] = new S_Node();
+            }
+        }
         CheckPassableTerrain();
     }
 
@@ -66,14 +75,86 @@ public class S_Grid : MonoBehaviour
     }
 
     /*
-     * Function that returns the wolrd position of an element.
+     *Function that returns the wolrd position of an element.
      *
      *@param x (int) : x position in the world.
      *@param y (int) : y position in the world.
+     *
      *@return (Vector3) : return a Vector3, the position of the object in the world.
     */
     private Vector3 GetWorldPosition(int x, int y)
     {
         return new Vector3(transform.position.x + (x * CellSize), 0f, transform.position.z + (y * CellSize));
+    }
+
+    /*
+     *Function that returns the wolrd position of The grid.
+     *
+     *@param worldPosition (Vector3) : the position of the grid in the world.
+     *
+     *@return (Vector2Int) : return the grid position in the world.
+    */
+    public Vector2Int GetGridPosition(Vector3 worldPosition)
+    {
+        worldPosition -= transform.position;
+        Vector2Int positionOnGrid = new Vector2Int((int)(worldPosition.x / CellSize), (int)(worldPosition.z / CellSize));
+        return positionOnGrid;
+    }
+
+    /*
+     *Function that set a character on the grid.
+     *
+     *@param positionOnGrid (Vector2Int) : the position of the object on the grid.
+     *@param gridObject (S_GridObject) : the grid object we want to place on the grid.
+    */
+    public void PlaceObject(Vector2Int positionOnGrid, S_GridObject gridObject)
+    {
+        //Check if the position is out of the grid
+        if (CheckBoundry(positionOnGrid))
+        {
+            Grid[positionOnGrid.x, positionOnGrid.y].SetGridObject(gridObject);
+        }
+        else
+        {
+            Debug.Log("Out boundry");
+        }
+    }
+
+    /*
+     *Function returns an bject placed on the grid.
+     *
+     *@param gridPosition (Vector2Int) : the position of the grid.
+     *
+     *@return (S_GridObject) : returns the selected object if not null.
+    */
+    public S_GridObject GetPlaceObject(Vector2Int gridPosition)
+    {
+        //Check if the selected position is out of the grid.
+        if (CheckBoundry(gridPosition))
+        {
+            S_GridObject gridObject = Grid[gridPosition.x, gridPosition.y].GetGridObject();
+            return gridObject;
+        }
+        return null;
+    }
+
+    /*
+     *Function returns that check if the selected position is out of the grid.
+     *
+     *@param positionOnGrid (Vector2Int) : the selected position of the grid.
+     *
+     *@return (bool) : returns if it is out of the grid or not.
+    */
+    public bool CheckBoundry(Vector2Int positionOnGrid)
+    {
+        if(positionOnGrid.x < 0 || positionOnGrid.x >= Length)
+        {
+            return false;
+        }
+        if (positionOnGrid.y < 0 || positionOnGrid.x >= Width)
+        {
+            return false;
+        }
+        return true;
     }
 }
